@@ -74,17 +74,124 @@ void freeStrArr(char **strArr){
     free(strArr);
 }
 
-int main(int argc, char **argv)
-{
-    char str[] = "2 ./printchars c 12 b";
+/**
+ * Creates a new PCB for a process
+ * @param (path) : path to program to execute
+ * @param (priority) : priority of program to execute
+ * @param (pid) : process ID of program to execute
+ * @param (index) : index within PCB List
+ * @param (prev) : previous PCB in PCB list
+ * @param (next) : next PCB in PCB List
+ */
+PCB *createPCB(char *path, int priority, pid_t pid, int index, PCB *prev, PCB *next){
+    PCB *process = malloc(sizeof(PCB));
 
-    size_t size = 0;
+    process->path = strdup(path);
+    process->pid = pid;
+    process->index = index;
+    process->prev = prev;
+    process->next = next;
 
-    char **strArr = splitStr(str, ' ', &size);
+    return process;
+}
 
-    for (int i = 0; *(strArr + i); i++){
-        printf("[%s] ", *(strArr+i));
+/**
+ * Creates PCB for a child process containing relevant information (PID, priority, index, prev, next)
+ * @param (*config_file) : the path to config_file containing programs to be executed through scheduling scheme
+ * @param (*pcbQueue) : queue of PCBs to populate
+ * @param (num_processes) : number of processes to schedule
+ */
+PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
+    //open config file with read permissions
+    FILE *fp = fopen(config_file, "r");
+
+    //check if opening file was successful
+    if (fp == NULL) {
+        perror("ERROR : cannot read from file");
+        exit(NULL); //NOTE : consider changing to return NULL
     }
 
+    char *line = NULL;
+    size_t len = 0;
+    size_t read;
+    int index = 0;//index of PCBs (NOTE: maybe pass as parameter)
 
-}//end main()
+    //read each line from file
+    while ((read = getline(&line, &len, fp)) != -1){
+        size_t size = 0;
+
+        char **strArr = splitStr(line, ' ', &size);//split line by white space
+
+        /* Create array for program arguments in line read*/
+        char **args = malloc(sizeof(char *) * (size - 2));
+        char **elem = args;//for iterating while maintaining head pointer of args
+
+        for (int i = 2; (size_t) i < size; i++){
+            *elem = malloc(strlen(strArr[i]));
+            strcpy(*elem, strArr[i]);
+
+            elem+=1;
+        }
+
+        //*elem = NULL;
+
+        //create child process
+        pid_t pid = fork();
+
+        if (pid < 0) fprintf(stderr, "Failure to execute process [%d] [%s]\n", pid, strArr[1]);
+        else if (pid > 0){ //parent process
+            kill(pid, SIGSTOP); //stop the child process
+
+            //Create PCB for process
+            PCB *process = createPCB(strArr[1], atoi(strArr[0]), pid, index, NULL, pcb_list);
+            index += 1;
+
+            if (pcb_list) {
+                pcb_list->prev = process;
+            }
+
+            pcb_list = process;
+        }
+        else {//child process
+            //Make system call to execute program from child process
+            execv(strArr[1], args);
+        }
+        //free memory used for args string array
+        freeStrArr(args);
+        //free memory used for string array of line read from file
+        freeStrArr(strArr);
+
+        //count number of processes
+        *num_processes+=1;
+
+    }//end while (line iteration)
+
+    fclose(fp);
+    return pcb_list;
+
+}//end createPCBList
+
+/**
+ * Frees an individual PCB
+ * @param (process) : the pcb to free
+ */
+void freePCB(PCB *pcb){
+    free(pcb->path);
+    free(pcb);
+}
+
+/**
+ * Frees memory of PCB list
+ * @param (pcb_list) : the list of PCBs to free the memory of
+ */
+void freePCBList(PCB *pcb_list){
+    while (pcb_list) {
+        free(pcb_list->path);
+        kill(pcb_list->pid, SIGTERM);//terminate the process completely
+
+        PCB *next = pcb_list->next;
+
+        free(pcb_list);
+        pcb_list = next;
+    }
+}//end freePCBList

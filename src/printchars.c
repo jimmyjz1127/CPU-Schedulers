@@ -4,8 +4,9 @@
 #include <stdio.h>
 #include <limits.h>
 #include <unistd.h>
+#include <time.h>
 
-int main(int argc, char** argv) 
+int main(int argc, char** argv)
 {
     char c;
 
@@ -18,4 +19,6 @@ int main(int argc, char** argv)
         fflush(stdout);
         usleep(100000);
     }
+
+    return 0;
 }
