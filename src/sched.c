@@ -64,11 +64,12 @@ char **splitStr(char *str, const char delimeter, size_t *size) {
 /**
  * Frees a given string array
  * @param (strArr) : the string array to free
+ * @param (num_elements) : the number of elements in string array
  */
-void freeStrArr(char **strArr){
+void freeStrArr(char **strArr, size_t num_elements){
     //free all elements of strArr
-    for (int i = 0; *(strArr + i); i++){
-        free(*(strArr + i));
+    for (size_t i = 0; i < num_elements; i++){
+        free(strArr[i]);
     }
     //free the array itself (start)
     free(strArr);
@@ -123,17 +124,17 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
         char **strArr = splitStr(line, ' ', &size);//split line by white space
 
         /* Create array for program arguments in line read*/
-        char **args = malloc(sizeof(char *) * (size - 2));
+        char **args = malloc(sizeof(char *) * (size - 1));
         char **elem = args;//for iterating while maintaining head pointer of args
 
-        for (int i = 2; (size_t) i < size; i++){
-            *elem = malloc(strlen(strArr[i]));
+        for (int i = 1; (size_t) i < size; i++){
+            *elem = (char *) malloc(strlen(strArr[i]));
             strcpy(*elem, strArr[i]);
 
             elem+=1;
         }
 
-        //*elem = NULL;
+        *elem = NULL;
 
         //create child process
         pid_t pid = fork();
@@ -149,7 +150,6 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
             if (pcb_list) {
                 pcb_list->prev = process;
             }
-
             pcb_list = process;
         }
         else {//child process
@@ -157,9 +157,9 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
             execv(strArr[1], args);
         }
         //free memory used for args string array
-        freeStrArr(args);
+        freeStrArr(args, size-2);
         //free memory used for string array of line read from file
-        freeStrArr(strArr);
+        freeStrArr(strArr, size);
 
         //count number of processes
         *num_processes+=1;
@@ -171,14 +171,6 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
 
 }//end createPCBList
 
-/**
- * Frees an individual PCB
- * @param (process) : the pcb to free
- */
-void freePCB(PCB *pcb){
-    free(pcb->path);
-    free(pcb);
-}
 
 /**
  * Frees memory of PCB list
@@ -187,9 +179,10 @@ void freePCB(PCB *pcb){
 void freePCBList(PCB *pcb_list){
     while (pcb_list) {
         free(pcb_list->path);
+        PCB *next = pcb_list->next;
+
         kill(pcb_list->pid, SIGTERM);//terminate the process completely
 
-        PCB *next = pcb_list->next;
 
         free(pcb_list);
         pcb_list = next;

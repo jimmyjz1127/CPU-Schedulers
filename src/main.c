@@ -7,6 +7,7 @@
 
 int main(int argc, char **argv)
 {
+
     if (argc < 2) {
         printf("Usage : ./sched <config file> \n");
     }
@@ -21,7 +22,11 @@ int main(int argc, char **argv)
 
         roundRobin(ready_queue, 500000, num_processes);
 
-        printDetails(ready_queue);
+        printDetails(ready_queue, num_processes);
+
+        // freeQueue(ready_queue);
+        //
+        // freePCBList(pcb_list);
     }
 
 }//end main()

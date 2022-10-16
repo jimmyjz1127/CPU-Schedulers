@@ -52,11 +52,6 @@ PCB *createPCB(char *path, int priority, pid_t pid, int index, PCB *prev, PCB *n
  */
 void freePCBList(PCB *pcb_list);
 
-/**
- * Frees an individual PCB
- * @param (process) : the pcb to free
- */
-void freePCB(PCB *pcb);
 
 /**
  * Splits string according to provided delimeter
@@ -69,6 +64,7 @@ char **splitStr(char *str, const char delimeter, size_t *size);
 /**
  * Frees a given string array
  * @param (strArr) : the string array to free
+ * @param (num_elements) : the number of elements in string array
  */
-void freeStrArr(char **strArr);
+void freeStrArr(char **strArr, size_t num_elements);
 #endif

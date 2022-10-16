@@ -34,6 +34,12 @@ typedef struct ReadyQueue  {
 ReadyQueue *createQueue(PCB *pcb_list);
 
 /**
+ * Given a ready queue, makes the queue cyclic by connecting head and tail nodes
+ * @param (queue) :the ready queue to make cyclic
+ */
+void makeQueueCyclic(ReadyQueue *queue);
+
+/**
  * frees memory of ReadyQueue by freeing all nodes
  * @param (queue) : ReadyQueue to free memory of
  */
@@ -54,8 +60,10 @@ void simplePriority(ReadyQueue *queue);
 void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size);
 
 /**
- * Prints the scheduling info for all processes in ReadyQueue after being executed (path to program, PID, time spent)
+ * Prints the scheduling info for all processes in ReadyQueue after being executed
+ * info : (path to program, PID, number of CPU bursts, time spent)
  * @param (queue) : queue of completed processes
+ * @param (num_elements) : the number of elements in readyqueue
  */
- void printDetails(ReadyQueue *queue);
+ void printDetails(ReadyQueue *queue, size_t num_processes);
 #endif

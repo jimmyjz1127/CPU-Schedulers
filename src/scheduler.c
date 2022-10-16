@@ -24,7 +24,24 @@ ReadyQueue *createQueue(PCB *pcb_list) {
         pcb_list=pcb_list->next;
     }
 
+    makeQueueCyclic(prev);
+
     return prev;
+}
+
+/**
+ * Given a ready queue, makes the queue cyclic by connecting head and tail nodes
+ * @param (queue) :the ready queue to make cyclic
+ */
+void makeQueueCyclic(ReadyQueue *queue) {
+    ReadyQueue *elem = queue;
+
+    while (elem->next) {
+        elem = elem->next;
+    }
+
+    queue->prev = elem;
+    elem->next = queue;
 }
 
 /**
@@ -56,17 +73,17 @@ void simplePriority(ReadyQueue *queue){
  * @param (size) : the number of PCBs in ready queue
  */
 void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
-    ReadyQueue *head = queue; //the the head of queue
+    ReadyQueue *elem = queue; //the the head of queue
 
     size_t num_terminated = 0;//number of terminated processes
 
     //iterate through the queue
-    while (queue) {
+    while (elem) {
         //check that process has not terminated
-        if (queue->terminated == 0) {
-            pid_t pid = queue->pcb->pid;
+        if (elem->terminated == 0) {
+            pid_t pid = elem->pcb->pid;
 
-            printf("\nExecuting CPU burst on [%s] with PID = [%d]\n", queue->pcb->path, pid);
+            printf("\nExecuting CPU burst on [%s] with PID = [%d]\n", elem->pcb->path, pid);
 
             clock_t begin = clock(); //get start time of process
 
@@ -79,19 +96,20 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
 
             double burst = ((double)(end - begin))/CLOCKS_PER_SEC;//time spent on cpu burst
 
-            queue->time_spent+=burst;
-            queue->num_bursts+=1;
+            elem->time_spent+=burst;
+            elem->num_bursts+=1;
 
             //Check if process has terminated
-            if (waitpid(pid, NULL, WNOHANG) != 0){ //use WNOHANG to prevent suspention or waiting
-                queue->terminated = 1;
+            int status;
+            if (waitpid(pid, &status, WNOHANG) != 0){ //use WNOHANG to prevent suspention or waiting
+                elem->terminated = 1;
                 num_terminated += 1;
             }
         }//end if
-        if (num_terminated == size) {//if all processes are terminated then break while loop
+        if (num_terminated >= size) {//if all processes are terminated then break while loop
             break;
         }
-        queue = queue->next;
+        elem = elem->next;
     }//end while
 }//end roundRobin()
 
@@ -99,13 +117,16 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
  * Prints the scheduling info for all processes in ReadyQueue after being executed
  * info : (path to program, PID, number of CPU bursts, time spent)
  * @param (queue) : queue of completed processes
+ * @param (num_elements) : the number of elements in readyqueue
  */
- void printDetails(ReadyQueue *queue) {
+ void printDetails(ReadyQueue *queue, size_t num_processes) {
      ReadyQueue *temp = queue;
+     size_t counter = 0;
 
-     while (temp){
+     while (temp && counter < num_processes){
          printf("\nProgram [%s] with PID=[%d] executed for [%d] CPU burst with total time = [%f] \n",
-                queue->pcb->path, queue->pcb->pid, queue->num_bursts, queue->time_spent);
+                temp->pcb->path, temp->pcb->pid, temp->num_bursts, temp->time_spent);
         temp = temp->next;
+        counter+=1;
      }
  }
