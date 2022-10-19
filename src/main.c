@@ -24,9 +24,9 @@ int main(int argc, char **argv)
 
         printDetails(ready_queue, num_processes);
 
-        // freeQueue(ready_queue);
-        //
-        // freePCBList(pcb_list);
+        freePCBList(pcb_list);
+
+        freeQueue(ready_queue, num_processes);
     }
 
 }//end main()

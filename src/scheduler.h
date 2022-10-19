@@ -43,7 +43,7 @@ void makeQueueCyclic(ReadyQueue *queue);
  * frees memory of ReadyQueue by freeing all nodes
  * @param (queue) : ReadyQueue to free memory of
  */
-void freeQueue(ReadyQueue *queue);
+void freeQueue(ReadyQueue *queue, size_t size);
 
 /**
  * Simple Priority Scheduler : execute processes from a ready-queue in order based on priority of processes

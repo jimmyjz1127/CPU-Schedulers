@@ -6,10 +6,11 @@
  */
 ReadyQueue *createQueue(PCB *pcb_list) {
     ReadyQueue *prev = NULL;
-    while (pcb_list){
+    PCB *elem = pcb_list;
+    while (elem){
         ReadyQueue *queue = malloc(sizeof(ReadyQueue));
 
-        queue->pcb = pcb_list;
+        queue->pcb = elem;
         queue->terminated=0;
         queue->time_spent=0;
         queue->num_bursts=0;
@@ -21,7 +22,7 @@ ReadyQueue *createQueue(PCB *pcb_list) {
 
         prev = queue;
 
-        pcb_list=pcb_list->next;
+        elem=elem->next;
     }
 
     makeQueueCyclic(prev);
@@ -48,11 +49,13 @@ void makeQueueCyclic(ReadyQueue *queue) {
  * frees memory of ReadyQueue by freeing all nodes
  * @param (queue) : ReadyQueue to free memory of
  */
-void freeQueue(ReadyQueue *queue) {
-    while (queue) {
+void freeQueue(ReadyQueue *queue, size_t size) {
+    size_t count = 0;
+    while (queue && count < size) {
         ReadyQueue *temp = queue->next;
         free(queue);
         queue = temp;
+        count++;
     }
 }
 
@@ -61,9 +64,10 @@ void freeQueue(ReadyQueue *queue) {
  * Simple Priority Scheduler : execute processes from a ready-queue in order based on priority of processes
  * @param (queue) : ReadyQueue of processes to execute (sorted by priority value)
  */
-void simplePriority(ReadyQueue *queue){
+void simplePriority(ReadyQueue *queue) {
 
 }
+
 
 
 /**
