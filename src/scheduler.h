@@ -41,9 +41,17 @@ void makeQueueCyclic(ReadyQueue *queue);
 
 /**
  * frees memory of ReadyQueue by freeing all nodes
- * @param (queue) : ReadyQueue to free memory of
+ * @param (queue) : ReadyQueue to free memory ofsdf
  */
 void freeQueue(ReadyQueue *queue, size_t size);
+
+/**
+ *
+ *
+ *
+ *
+ */
+ReadyQueue mergeSort(ReadyQueue *queue);
 
 /**
  * Simple Priority Scheduler : execute processes from a ready-queue in order based on priority of processes

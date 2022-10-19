@@ -25,8 +25,6 @@ ReadyQueue *createQueue(PCB *pcb_list) {
         elem=elem->next;
     }
 
-    makeQueueCyclic(prev);
-
     return prev;
 }
 
@@ -60,6 +58,8 @@ void freeQueue(ReadyQueue *queue, size_t size) {
 }
 
 
+
+
 /**
  * Simple Priority Scheduler : execute processes from a ready-queue in order based on priority of processes
  * @param (queue) : ReadyQueue of processes to execute (sorted by priority value)
@@ -77,6 +77,8 @@ void simplePriority(ReadyQueue *queue) {
  * @param (size) : the number of PCBs in ready queue
  */
 void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
+    makeQueueCyclic(queue);
+
     ReadyQueue *elem = queue; //the the head of queue
 
     size_t num_terminated = 0;//number of terminated processes
