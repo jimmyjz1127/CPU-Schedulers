@@ -88,6 +88,7 @@ PCB *createPCB(char *path, int priority, pid_t pid, int index, PCB *prev, PCB *n
     PCB *process = malloc(sizeof(PCB));
 
     process->path = strdup(path);
+    process->priority = priority;
     process->pid = pid;
     process->index = index;
     process->prev = prev;
@@ -170,6 +171,7 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
     return pcb_list;
 
 }//end createPCBList
+
 
 
 /**
