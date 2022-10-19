@@ -1,13 +1,3 @@
-# all:
-# 	gcc -o printchars printchars.c
-# 	gcc sched.c scheduler.c main.c -o main
-#
-# sched:
-# 	gcc sched.c -o sched
-#
-# printchars:
-# 	gcc -o printchars printchars.c
-
 all : sched.o scheduler.o main.o printchars
 	clang -Wall -Wextra main.o sched.o scheduler.o -o run
 

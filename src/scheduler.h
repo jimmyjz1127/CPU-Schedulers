@@ -20,6 +20,7 @@
  */
 typedef struct ReadyQueue  {
     struct PCB *pcb; //the process itself
+    int priority;//priority value of process
     int terminated;//1 for terminated; 0 otherwise
     double time_spent; //burst time spent
     int num_bursts; //number of CPU bursts spent on process
@@ -46,12 +47,24 @@ void makeQueueCyclic(ReadyQueue *queue);
 void freeQueue(ReadyQueue *queue, size_t size);
 
 /**
- *
- *
- *
- *
+ * Merges two halves of Ready Queue object after being halved by merge sort
+ * @param (first) : the first half of ReadyQueue object
+ * @param (second) : the second half of ReadyQueue object
  */
-ReadyQueue mergeSort(ReadyQueue *queue);
+ ReadyQueue *mergeQueue(ReadyQueue *first, ReadyQueue *second);
+
+/**
+ * divides the queue into halves for merge sort
+ * @param (queue) : the ready queue object to divide
+ * @return : pointer to middle element of ReadyQueue object
+ */
+ReadyQueue *divideQueue(ReadyQueue *queue);
+
+/**
+ * Sorts ready queue of PCB's using merge sort algorithm
+ * @param (queue) : the ready queue to sort
+ */
+ReadyQueue *mergeSort(ReadyQueue *queue);
 
 /**
  * Simple Priority Scheduler : execute processes from a ready-queue in order based on priority of processes

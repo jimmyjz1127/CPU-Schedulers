@@ -181,7 +181,7 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
 void freePCBList(PCB *pcb_list){
     while (pcb_list) {
         PCB *next = pcb_list->next;
-        // free(pcb_list->path);
+        free(pcb_list->path);
 
         kill(pcb_list->pid, SIGTERM);//terminate the process completely
 

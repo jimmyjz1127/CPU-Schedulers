@@ -8,25 +8,39 @@
 int main(int argc, char **argv)
 {
 
+    int type = 1;
+
     if (argc < 2) {
         printf("Usage : ./sched <config file> \n");
     }
-    else {
-        char* file_path = argv[1];
+    else if (argc == 3){
+        type = atoi(argv[2]);
+    }
 
-        size_t num_processes = 0;//number of processes to schedule
+    char* file_path = argv[1];
 
-        PCB *pcb_list = createPCBList(file_path, NULL, &num_processes);
+    size_t num_processes = 0;//number of processes to schedule
 
-        ReadyQueue *ready_queue = createQueue(pcb_list);
+    PCB *pcb_list = createPCBList(file_path, NULL, &num_processes);
 
+    ReadyQueue *ready_queue = createQueue(pcb_list);
+
+    if (type == 1){
         roundRobin(ready_queue, 500000, num_processes);
-
         printDetails(ready_queue, num_processes);
 
         freePCBList(pcb_list);
-
         freeQueue(ready_queue, num_processes);
+    }
+    else if (type == 2) {
+        simplePriority(ready_queue);
+        printDetails(ready_queue, num_processes);
+
+        freePCBList(pcb_list);
+        freeQueue(ready_queue, num_processes);
+    }
+    else {
+        printf("\nType of schedule indicated is not valid\n");
     }
 
 }//end main()
