@@ -82,6 +82,7 @@ ReadyQueue *divideQueue(ReadyQueue *queue) {
  * Merges two halves of Ready Queue object after being halved by merge sort
  * @param (first) : the first half of ReadyQueue object
  * @param (second) : the second half of ReadyQueue object
+ * @return : first and second merged in the correct order
  */
  ReadyQueue *mergeQueue(ReadyQueue *first, ReadyQueue *second) {
      if (!first) return second;
@@ -99,12 +100,12 @@ ReadyQueue *divideQueue(ReadyQueue *queue) {
          second->prev = NULL;
          return second;
      }
-
- }
+ }//end mergeQueue
 
 /**
  * Sorts ready queue of PCB's using merge sort algorithm
  * @param (queue) : the ready queue to sort
+ * @return : the ReadyQueue sorted
  */
 ReadyQueue *mergeSort(ReadyQueue *queue){
 

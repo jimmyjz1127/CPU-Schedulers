@@ -61,13 +61,12 @@ void freeStrArr(char **strArr, size_t num_elements){
  * @param (next) : next PCB in PCB List
  * @return : PCB object
  */
-PCB *createPCB(char *path, int priority, pid_t pid, int index, PCB *prev, PCB *next){
+PCB *createPCB(char *path, int priority, pid_t pid, PCB *prev, PCB *next){
     PCB *process = malloc(sizeof(PCB));
 
     process->path = strdup(path);
     process->priority = priority;
     process->pid = pid;
-    process->index = index;
     process->prev = prev;
     process->next = next;
 
@@ -94,7 +93,6 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
     char *line = NULL;
     size_t len = 0;
     size_t read;
-    int index = 0;//index of PCBs
 
     //read each line from file
     while ((read = getline(&line, &len, fp)) != -1){
@@ -123,8 +121,7 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
             kill(pid, SIGSTOP); //stop the child process
 
             //Create PCB for process
-            PCB *process = createPCB(strArr[1], atoi(strArr[0]), pid, index, NULL, pcb_list);
-            index += 1;
+            PCB *process = createPCB(strArr[1], atoi(strArr[0]), pid, NULL, pcb_list);
 
             if (pcb_list) {
                 pcb_list->prev = process;
