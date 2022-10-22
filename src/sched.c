@@ -83,6 +83,7 @@ void freeStrArr(char **strArr, size_t num_elements){
  * @param (index) : index within PCB List
  * @param (prev) : previous PCB in PCB list
  * @param (next) : next PCB in PCB List
+ * @return : PCB object
  */
 PCB *createPCB(char *path, int priority, pid_t pid, int index, PCB *prev, PCB *next){
     PCB *process = malloc(sizeof(PCB));
@@ -102,6 +103,7 @@ PCB *createPCB(char *path, int priority, pid_t pid, int index, PCB *prev, PCB *n
  * @param (*config_file) : the path to config_file containing programs to be executed through scheduling scheme
  * @param (*pcbQueue) : queue of PCBs to populate
  * @param (num_processes) : number of processes to schedule
+ * @return : head to linked list of PCB objects
  */
 PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
     //open config file with read permissions
@@ -116,7 +118,7 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
     char *line = NULL;
     size_t len = 0;
     size_t read;
-    int index = 0;//index of PCBs (NOTE: maybe pass as parameter)
+    int index = 0;//index of PCBs
 
     //read each line from file
     while ((read = getline(&line, &len, fp)) != -1){

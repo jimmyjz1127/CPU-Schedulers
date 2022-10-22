@@ -125,7 +125,7 @@ ReadyQueue *mergeSort(ReadyQueue *queue){
 void simplePriority(ReadyQueue *queue) {
     ReadyQueue *head = mergeSort(queue);
 
-    printf("\n---------------------EXECUTING PROCESSES---------------------\n");
+    printf("\n--------------------EXECUTING PROCESSES--------------------\n");
 
     while (head) {
         if (head->terminated == 0){
@@ -169,7 +169,7 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
 
     size_t num_terminated = 0;//number of terminated processes
 
-    printf("\n---------------------EXECUTING PROCESSES---------------------\n");
+    printf("\n--------------------EXECUTING PROCESSES--------------------\n");
 
     //iterate through the queue
     while (elem) {
@@ -221,19 +221,19 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
      double total_time = 0;//total cpu time spent
      double avg_wait_time = 0;//average cpu waiting time
 
-     printf("\n-------------------------DETAILS-------------------------\n");
+     printf("\nDETAILS:\n");
 
      while (temp && counter < num_processes){
          total_time += temp->time_spent;
 
          if (counter != num_processes - 1) avg_wait_time += avg_wait_time + temp->time_spent;
 
-         printf("\nProgram [%s] with PID=[%d] executed for [%d] CPU burst with total time = [%f] \n",
+         printf("Program [%s] with PID=[%d] executed for [%d] CPU burst with total time = [%f]\n",
                 temp->pcb->path, temp->pcb->pid, temp->num_bursts, temp->time_spent);
         temp = temp->next;
         counter+=1;
      }
 
-     printf("\nTotal CPU Burst Time : [%f]\n", total_time);
+     printf("\nTotal CPU Burst Time : [%f]", total_time);
      printf("\nAverage CPU Waiting Time : [%f]\n", avg_wait_time/(double)num_processes);
  }
