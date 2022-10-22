@@ -7,11 +7,15 @@
 
 int main(int argc, char **argv)
 {
-
+    /**
+     * Type of scheduling scheme to use (default is round robin)
+     * type = 1 : round robin
+     * type = 2 : priority scheduling
+     */
     int type = 1;
 
     if (argc < 2) {
-        printf("Usage : ./sched <config file> \n");
+        printf("Usage : ./sched <config file> <mode>\n");
     }
     else if (argc == 3){
         type = atoi(argv[2]);
@@ -21,20 +25,22 @@ int main(int argc, char **argv)
 
     size_t num_processes = 0;//number of processes to schedule
 
-    PCB *pcb_list = createPCBList(file_path, NULL, &num_processes);
+    PCB *pcb_list = createPCBList(file_path, NULL, &num_processes);//create linked list of PCBs
 
-    ReadyQueue *ready_queue = createQueue(pcb_list);
+    ReadyQueue *ready_queue = createQueue(pcb_list);//create ready queue of processes (PCBs)
 
-    if (type == 1){
-        roundRobin(ready_queue, 500000, num_processes);
-        printDetails(ready_queue, num_processes);
+    if (type == 1){//round robin scheduling
+        useconds_t time_quantum = 500000;//time quantum
+
+        roundRobin(ready_queue, time_quantum, num_processes);//execute processes according to round robin scheduling
+        printDetails(ready_queue, num_processes);//print runtime details
 
         freePCBList(pcb_list);
         freeQueue(ready_queue, num_processes);
     }
-    else if (type == 2) {
-        simplePriority(ready_queue);
-        printDetails(ready_queue, num_processes);
+    else if (type == 2) {//priority scheduling
+        simplePriority(ready_queue);//execute processes according to priority scheduling
+        printDetails(ready_queue, num_processes);//print runtime details
 
         freePCBList(pcb_list);
         freeQueue(ready_queue, num_processes);

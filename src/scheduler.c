@@ -125,6 +125,8 @@ ReadyQueue *mergeSort(ReadyQueue *queue){
 void simplePriority(ReadyQueue *queue) {
     ReadyQueue *head = mergeSort(queue);
 
+    printf("\n---------------------EXECUTING PROCESSES---------------------\n");
+
     while (head) {
         if (head->terminated == 0){
             pid_t pid = head->pcb->pid;
@@ -148,6 +150,8 @@ void simplePriority(ReadyQueue *queue) {
 
         head=head->next;
     }
+
+    printf("\n-------------------------FINISHED-------------------------\n");
 }
 
 
@@ -164,6 +168,8 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
     ReadyQueue *elem = queue; //the the head of queue
 
     size_t num_terminated = 0;//number of terminated processes
+
+    printf("\n---------------------EXECUTING PROCESSES---------------------\n");
 
     //iterate through the queue
     while (elem) {
@@ -199,6 +205,7 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
         }
         elem = elem->next;
     }//end while
+    printf("\n-------------------------FINISHED-------------------------\n");
 }//end roundRobin()
 
 /**
@@ -211,10 +218,22 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
      ReadyQueue *temp = queue;
      size_t counter = 0;
 
+     double total_time = 0;//total cpu time spent
+     double avg_wait_time = 0;//average cpu waiting time
+
+     printf("\n-------------------------DETAILS-------------------------\n");
+
      while (temp && counter < num_processes){
+         total_time += temp->time_spent;
+
+         if (counter != num_processes - 1) avg_wait_time += avg_wait_time + temp->time_spent;
+
          printf("\nProgram [%s] with PID=[%d] executed for [%d] CPU burst with total time = [%f] \n",
                 temp->pcb->path, temp->pcb->pid, temp->num_bursts, temp->time_spent);
         temp = temp->next;
         counter+=1;
      }
+
+     printf("\nTotal CPU Burst Time : [%f]\n", total_time);
+     printf("\nAverage CPU Waiting Time : [%f]\n", avg_wait_time/(double)num_processes);
  }

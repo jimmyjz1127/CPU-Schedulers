@@ -8,6 +8,12 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+/**
+ * Usage : takes two arguments (m,n)
+ * @arg (m) : the char to print
+ * @arg (n) : the number of char (m) to print
+ * If args are not specified, printchar will by default print "*" 30 times 
+ */
 int main(int argc, char** argv)
 {
     char c;

@@ -47,18 +47,18 @@ void makeQueueCyclic(ReadyQueue *queue);
 void freeQueue(ReadyQueue *queue, size_t size);
 
 /**
- * Merges two halves of Ready Queue object after being halved by merge sort
- * @param (first) : the first half of ReadyQueue object
- * @param (second) : the second half of ReadyQueue object
- */
- ReadyQueue *mergeQueue(ReadyQueue *first, ReadyQueue *second);
-
-/**
  * divides the queue into halves for merge sort
  * @param (queue) : the ready queue object to divide
  * @return : pointer to middle element of ReadyQueue object
  */
 ReadyQueue *divideQueue(ReadyQueue *queue);
+
+/**
+ * Merges two halves of Ready Queue object after being halved by merge sort
+ * @param (first) : the first half of ReadyQueue object
+ * @param (second) : the second half of ReadyQueue object
+ */
+ ReadyQueue *mergeQueue(ReadyQueue *first, ReadyQueue *second);
 
 /**
  * Sorts ready queue of PCB's using merge sort algorithm
