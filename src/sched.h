@@ -57,9 +57,8 @@ void freePCBList(PCB *pcb_list);
  * Splits string according to provided delimeter
  * @param (str) : the string the split
  * @param (delimeter) : the delimeter to split the string by
- * source : https://stackoverflow.com/questions/9210528/split-string-with-delimiters-in-c
  */
-char **splitStr(char *str, const char delimeter, size_t *size);
+char **splitStr(char *str, size_t *size);
 
 /**
  * Frees a given string array
