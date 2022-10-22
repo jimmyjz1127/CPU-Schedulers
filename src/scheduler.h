@@ -21,6 +21,7 @@
 typedef struct ReadyQueue  {
     struct PCB *pcb; //the process itself
     int priority;//priority value of process
+    int size;
     int terminated;//1 for terminated; 0 otherwise
     double time_spent; //burst time spent
     int num_bursts; //number of CPU bursts spent on process
@@ -58,19 +59,25 @@ ReadyQueue *divideQueue(ReadyQueue *queue);
  * @param (first) : the first half of ReadyQueue object
  * @param (second) : the second half of ReadyQueue object
  */
- ReadyQueue *mergeQueue(ReadyQueue *first, ReadyQueue *second);
+ ReadyQueue *mergeQueue(ReadyQueue *first, ReadyQueue *second, int mode);
 
 /**
  * Sorts ready queue of PCB's using merge sort algorithm
  * @param (queue) : the ready queue to sort
  */
-ReadyQueue *mergeSort(ReadyQueue *queue);
+ReadyQueue *mergeSort(ReadyQueue *queue, int mode);
 
 /**
  * Simple Priority Scheduler : execute processes from a ready-queue in order based on priority of processes
  * @param (queue) : ReadyQueue of processes to execute (sorted by priority value)
  */
 void simplePriority(ReadyQueue *queue);
+
+/**
+ * Shortest Job First Scheduler : execute processes from a ready-queue in order based on process size
+ * @param (queue) : ReadyQueue of processes to execute (sorted by priority value)
+ */
+void shortestJobFirst(ReadyQueue *queue);
 
 /**
  * Executes the processes (PCBs) according to round robin scheduler schema

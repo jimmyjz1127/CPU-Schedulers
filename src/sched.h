@@ -20,6 +20,7 @@ typedef struct PCB {
     char *path; //path to program
     int priority; //priority rating
     pid_t pid; //Process ID of process to execute program
+    int size; //size of process
 
     struct PCB *prev; //next PCB
     struct PCB *next; //previous PCB
@@ -38,11 +39,11 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes);
  * @param (path) : path to program to execute
  * @param (priority) : priority of program to execute
  * @param (pid) : process ID of program to execute
- * @param (index) : index within PCB List
+ * @param (size) : the size of the process
  * @param (prev) : previous PCB in PCB list
  * @param (next) : next PCB in PCB List
  */
-PCB *createPCB(char *path, int priority, pid_t pid, PCB *prev, PCB *next);
+PCB *createPCB(char *path, int priority, pid_t pid, int size, PCB *prev, PCB *next);
 
 /**
  * Frees memory of PCB list

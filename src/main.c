@@ -45,6 +45,13 @@ int main(int argc, char **argv)
         freePCBList(pcb_list);
         freeQueue(ready_queue, num_processes);
     }
+    else if (type == 3){
+        shortestJobFirst(ready_queue);//execute processes according to priority scheduling
+        printDetails(ready_queue, num_processes);//print runtime details
+
+        freePCBList(pcb_list);
+        freeQueue(ready_queue, num_processes);
+    }
     else {
         printf("\nType of schedule indicated is not valid\n");
     }

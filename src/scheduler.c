@@ -12,6 +12,7 @@ ReadyQueue *createQueue(PCB *pcb_list) {
 
         queue->pcb = elem;
         queue->priority = elem->priority;
+        queue->size = elem->size;
         queue->terminated=0;
         queue->time_spent=0;
         queue->num_bursts=0;
@@ -84,18 +85,24 @@ ReadyQueue *divideQueue(ReadyQueue *queue) {
  * @param (second) : the second half of ReadyQueue object
  * @return : first and second merged in the correct order
  */
- ReadyQueue *mergeQueue(ReadyQueue *first, ReadyQueue *second) {
+ ReadyQueue *mergeQueue(ReadyQueue *first, ReadyQueue *second, int mode) {
      if (!first) return second;
      if (!second) return first;
 
-     if (first->priority <= second->priority){
-         first->next = mergeQueue(first->next, second);
+     if (mode==1 && first->priority <= second->priority){
+         first->next = mergeQueue(first->next, second, mode);
+         first->next->prev = first;
+         first->prev = NULL;
+         return first;
+     }
+     else if (mode==2 && first->size <= second->size){
+         first->next = mergeQueue(first->next, second, mode);
          first->next->prev = first;
          first->prev = NULL;
          return first;
      }
      else {
-         second->next = mergeQueue(first, second->next);
+         second->next = mergeQueue(first, second->next, mode);
          second->next->prev = second;
          second->prev = NULL;
          return second;
@@ -107,16 +114,15 @@ ReadyQueue *divideQueue(ReadyQueue *queue) {
  * @param (queue) : the ready queue to sort
  * @return : the ReadyQueue sorted
  */
-ReadyQueue *mergeSort(ReadyQueue *queue){
-
+ReadyQueue *mergeSort(ReadyQueue *queue, int mode){
     if (!queue || !(queue->next)) return queue;
 
     ReadyQueue *second = divideQueue(queue);
 
-    queue = mergeSort(queue);
-    second = mergeSort(second);
+    queue = mergeSort(queue, mode);
+    second = mergeSort(second, mode);
 
-    return mergeQueue(queue, second);
+    return mergeQueue(queue, second, mode);
 }
 
 /**
@@ -124,7 +130,7 @@ ReadyQueue *mergeSort(ReadyQueue *queue){
  * @param (queue) : ReadyQueue of processes to execute (sorted by priority value)
  */
 void simplePriority(ReadyQueue *queue) {
-    ReadyQueue *head = mergeSort(queue);
+    ReadyQueue *head = mergeSort(queue, 1);
 
     printf("\n--------------------EXECUTING PROCESSES--------------------\n");
 
@@ -148,14 +154,43 @@ void simplePriority(ReadyQueue *queue) {
             head->time_spent = ((double) end - begin)/CLOCKS_PER_SEC;
             head->num_bursts = 1;
         }
-
         head=head->next;
     }
-
     printf("\n-------------------------FINISHED-------------------------\n");
-}
+}//end simplePriority()
 
+/**
+ * Shortest Job First Scheduler : execute processes from a ready-queue in order based on process size
+ * @param (queue) : ReadyQueue of processes to execute (sorted by priority value)
+ */
+void shortestJobFirst(ReadyQueue *queue) {
+    ReadyQueue *head = mergeSort(queue, 2);
+    printf("\n--------------------EXECUTING PROCESSES--------------------\n");
 
+    while (head) {
+        if (head->terminated == 0){
+            pid_t pid = head->pcb->pid;
+
+            printf("\nExecuting CPU burst on [%s] with PID = [%d]\n", head->pcb->path, pid);
+
+            clock_t begin = clock();
+
+            //Execute CPU burst
+            kill(pid, SIGCONT);
+
+            int status;
+            waitpid(pid, &status, 0);
+
+            clock_t end = clock();
+            head->terminated = 1;
+
+            head->time_spent = ((double) end - begin)/CLOCKS_PER_SEC;
+            head->num_bursts = 1;
+        }
+        head=head->next;
+    }
+    printf("\n-------------------------FINISHED-------------------------\n");
+}//end shortestJobFirst()
 
 /**
  * Executes the processes (PCBs) according to round robin scheduler schema
