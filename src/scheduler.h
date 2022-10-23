@@ -23,7 +23,7 @@ typedef struct ReadyQueue  {
     int priority;//priority value of process
     int size;
     int terminated;//1 for terminated; 0 otherwise
-    double time_spent; //burst time spent
+    double burst_time; //total CPU burst time
     int num_bursts; //number of CPU bursts spent on process
 
     //time when process enters ready queue
@@ -32,6 +32,9 @@ typedef struct ReadyQueue  {
 
     //time difference between when process enters ready queue to when it is complete
     double turnaround_time;
+
+    //time between arrival process and beginning of CPU burst
+    double waiting_time;
 
     struct ReadyQueue *next; //next process in ReadyQueue
     struct ReadyQueue *prev; //previous process in ReadyQueue

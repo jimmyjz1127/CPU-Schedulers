@@ -14,7 +14,7 @@ ReadyQueue *createQueue(PCB *pcb_list) {
         queue->priority = elem->priority;
         queue->size = elem->size;
         queue->terminated=0;
-        queue->time_spent=0;
+        queue->burst_time=0;
         queue->num_bursts=0;
 
         /* Record arrival time (time when process enters ready-queue)  */
@@ -165,7 +165,9 @@ void simplePriority(ReadyQueue *queue) {
             head->turnaround_time = (end.tv_sec - head->arrival_time_sec)
                                     + (double)(end.tv_nsec - head->arrival_time_nano)/1000000000L;
 
-            head->time_spent += (end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec)/1000000000L;
+            head->burst_time += (end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec)/1000000000L;
+            //calculate waiting time as difference between turnaround time and burst time
+            head->waiting_time = head->turnaround_time - head->burst_time;
 
             head->num_bursts = 1;
             head->terminated = 1;
@@ -207,7 +209,9 @@ void shortestJobFirst(ReadyQueue *queue) {
             head->turnaround_time = (end.tv_sec - head->arrival_time_sec)
                                     + (double)(end.tv_nsec - head->arrival_time_nano)/1000000000L;
 
-            head->time_spent += (end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec)/1000000000L;
+            head->burst_time += (end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec)/1000000000L;
+            //calculate waiting time as difference between turnaround time and burst time
+            head->waiting_time = head->turnaround_time - head->burst_time;
 
             head->num_bursts = 1;
             head->terminated = 1;
@@ -252,7 +256,7 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
 
             clock_gettime(CLOCK_REALTIME, &end);
 
-            elem->time_spent+=(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec)/1000000000L;
+            elem->burst_time+=(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec)/1000000000L;
             elem->num_bursts+=1;
 
             //Check if process has terminated
@@ -261,6 +265,8 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
                 //set turn around time as difference between arrival time and completion time
                 elem->turnaround_time = (end.tv_sec - elem->arrival_time_sec)
                                         + (double)(end.tv_nsec - elem->arrival_time_nano)/1000000000L;
+                //calculate waiting time as difference between turnaround time and burst time
+                elem->waiting_time = elem->turnaround_time - elem->burst_time;
 
                 elem->terminated = 1;
                 num_terminated += 1;
@@ -285,23 +291,22 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
      size_t counter = 0;
 
      double total_time = 0;//total cpu time spent
-     double turnaround_time = 0;
-     double avg_wait_time = 0;//average cpu waiting time
+     double total_turnaround_time = 0;
+     double total_wait_time = 0;//average cpu waiting time
 
      printf("\nDETAILS:\n");
 
      while (temp && counter < num_processes){
-         total_time += temp->time_spent;
-         turnaround_time += temp->turnaround_time;
-
-         if (counter < num_processes - 1) avg_wait_time += avg_wait_time + temp->time_spent;
+         total_time += temp->burst_time;
+         total_turnaround_time += temp->turnaround_time;
+         total_wait_time += temp->waiting_time;
 
          printf("Program [%s] with PID=[%d] executed for [%d] CPU burst with total time = [%lf]\n",
-                temp->pcb->path, temp->pcb->pid, temp->num_bursts, temp->time_spent);
+                temp->pcb->path, temp->pcb->pid, temp->num_bursts, temp->burst_time);
         temp = temp->next;
         counter+=1;
      }
      printf("\nTotal CPU Burst Time : [%lf]", total_time);
-     printf("\nAverage CPU Turnaround Time : [%lf]", turnaround_time/(double)num_processes);
-     printf("\nAverage CPU Waiting Time : [%lf]\n", avg_wait_time/((double)num_processes));
+     printf("\nAverage CPU Turnaround Time : [%lf]", total_turnaround_time/(double)num_processes);
+     printf("\nAverage CPU Waiting Time : [%lf]\n", total_wait_time/((double)num_processes));
  }
