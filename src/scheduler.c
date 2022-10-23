@@ -127,6 +127,7 @@ ReadyQueue *mergeSort(ReadyQueue *queue, int mode){
     return mergeQueue(queue, second, mode);
 }
 
+
 /**
  * Simple Priority Scheduler : execute processes from a ready-queue in order based on priority of processes
  * @param (queue) : ReadyQueue of processes to execute (sorted by priority value)
@@ -142,7 +143,9 @@ void simplePriority(ReadyQueue *queue) {
 
             printf("\nExecuting CPU burst on [%s] with PID = [%d]\n", head->pcb->path, pid);
 
-            clock_t begin = clock();
+            struct timespec start, end;
+
+            clock_gettime(CLOCK_REALTIME, &start);
 
             //Execute CPU burst
             kill(pid, SIGCONT);
@@ -150,10 +153,11 @@ void simplePriority(ReadyQueue *queue) {
             int status;
             waitpid(pid, &status, 0);
 
-            clock_t end = clock();
+            clock_gettime(CLOCK_REALTIME, &end);
+
             head->terminated = 1;
 
-            head->time_spent = ((double) end - begin)/CLOCKS_PER_SEC;
+            head->time_spent += (end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec)/1000000000L;
             head->num_bursts = 1;
         }
         head=head->next;
@@ -163,6 +167,7 @@ void simplePriority(ReadyQueue *queue) {
 
 /**
  * Shortest Job First Scheduler : execute processes from a ready-queue in order based on process size
+ * NOTE : only works for "printchars" program
  * @param (queue) : ReadyQueue of processes to execute (sorted by priority value)
  */
 void shortestJobFirst(ReadyQueue *queue) {
@@ -175,7 +180,9 @@ void shortestJobFirst(ReadyQueue *queue) {
 
             printf("\nExecuting CPU burst on [%s] with PID = [%d]\n", head->pcb->path, pid);
 
-            clock_t begin = clock();
+            struct timespec start, end;
+
+            clock_gettime(CLOCK_REALTIME, &start);
 
             //Execute CPU burst
             kill(pid, SIGCONT);
@@ -183,10 +190,11 @@ void shortestJobFirst(ReadyQueue *queue) {
             int status;
             waitpid(pid, &status, 0);
 
-            clock_t end = clock();
+            clock_gettime(CLOCK_REALTIME, &end);
+
             head->terminated = 1;
 
-            head->time_spent = ((double) end - begin)/CLOCKS_PER_SEC;
+            head->time_spent += (end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec)/1000000000L;
             head->num_bursts = 1;
         }
         head=head->next;
@@ -217,18 +225,17 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
 
             printf("\nExecuting CPU burst on [%s] with PID = [%d]\n", elem->pcb->path, pid);
 
-            clock_t begin = clock(); //get start time of process
+            struct timespec start, end;
+            clock_gettime(CLOCK_REALTIME, &start);
 
             //Execute CPU burst on process
             kill(pid, SIGCONT); //resume (start) process
             usleep(time_quantum);//allow process to execute for time quantum
             kill(pid, SIGSTOP); //stop process
 
-            clock_t end = clock();//get end time of process
+            clock_gettime(CLOCK_REALTIME, &end);
 
-            double burst = ((double)(end - begin))/CLOCKS_PER_SEC;//time spent on cpu burst
-
-            elem->time_spent+=burst;
+            elem->time_spent+=(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec)/1000000000L;
             elem->num_bursts+=1;
 
             //Check if process has terminated
@@ -264,14 +271,14 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
      while (temp && counter < num_processes){
          total_time += temp->time_spent;
 
-         if (counter != num_processes - 1) avg_wait_time += avg_wait_time + temp->time_spent;
+         if (counter < num_processes - 1) avg_wait_time += avg_wait_time + temp->time_spent;
 
-         printf("Program [%s] with PID=[%d] executed for [%d] CPU burst with total time = [%f]\n",
+         printf("Program [%s] with PID=[%d] executed for [%d] CPU burst with total time = [%lf]\n",
                 temp->pcb->path, temp->pcb->pid, temp->num_bursts, temp->time_spent);
         temp = temp->next;
         counter+=1;
      }
-
-     printf("\nTotal CPU Burst Time : [%f]", total_time);
-     printf("\nAverage CPU Waiting Time : [%f]\n", avg_wait_time/(double)num_processes);
+     printf("\nTotal CPU Turnaround Time : [%lf]", total_time);
+     printf("\nAverage CPU Turnaround Time : [%lf]", (double)total_time/(double)num_processes);
+     printf("\nAverage CPU Waiting Time : [%lf]\n", avg_wait_time/((double)num_processes));
  }
