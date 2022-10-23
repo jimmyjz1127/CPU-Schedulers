@@ -1,9 +1,3 @@
-// CS3104 P1 starter code
-// kt54, Oct 2018
-//
-// This program will start two processes and then toggle them using
-// STOP and CONT signals
-
 #include "sched.h"
 
 /**

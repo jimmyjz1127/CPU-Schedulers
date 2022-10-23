@@ -281,8 +281,7 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
 }//end roundRobin()
 
 /**
- * Prints the scheduling info for all processes in ReadyQueue after being executed
- * info : (path to program, PID, number of CPU bursts, time spent)
+ * Prints the scheduling info and time metrics for all processes executed from ready queue
  * @param (queue) : queue of completed processes
  * @param (num_elements) : the number of elements in readyqueue
  */
@@ -291,8 +290,8 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
      size_t counter = 0;
 
      double total_time = 0;//total cpu time spent
-     double total_turnaround_time = 0;
-     double total_wait_time = 0;//average cpu waiting time
+     double total_turnaround_time = 0;//total turnaround tim
+     double total_wait_time = 0;//total cpu waiting time
 
      printf("\nDETAILS:\n");
 

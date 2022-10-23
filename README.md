@@ -14,5 +14,6 @@ CS3104-P1 Practical : Process Schedulers in C
 
     ./run <path to config file> <scheduling type (optional)>
 
-    To run Round-Robin scheduling      :   ./run chars.conf 1
-    To run priority-based scheduling   :   ./run chars.conf 2
+    To run Round-Robin scheduling          :   ./run chars.conf 1
+    To run priority-based scheduling       :   ./run chars.conf 2
+    To run shortest-job-first scheduling   :   ./run chars.conf 3
