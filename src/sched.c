@@ -121,8 +121,14 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
         else if (pid > 0){ //parent process
             kill(pid, SIGSTOP); //stop the child process
 
+            //for shortest job first scheduling
+            int process_size = 0;
+            if (strcmp(strArr[1], "./printchars") == 0){
+                process_size = atoi(strArr[3]);
+            }
+
             //Create PCB for process
-            PCB *process = createPCB(strArr[1], atoi(strArr[0]), pid, atoi(strArr[3]), NULL, pcb_list);
+            PCB *process = createPCB(strArr[1], atoi(strArr[0]), pid, process_size, NULL, pcb_list);
 
             if (pcb_list) {
                 pcb_list->prev = process;
