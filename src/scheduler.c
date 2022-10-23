@@ -17,6 +17,12 @@ ReadyQueue *createQueue(PCB *pcb_list) {
         queue->time_spent=0;
         queue->num_bursts=0;
 
+        /* Record arrival time (time when process enters ready-queue)  */
+        struct timespec arrival;
+        clock_gettime(CLOCK_REALTIME, &arrival);
+        queue->arrival_time_sec = arrival.tv_sec;
+        queue->arrival_time_nano = arrival.tv_nsec;
+
         queue->next = prev;
         if (prev){
             prev->prev=queue;
@@ -143,6 +149,7 @@ void simplePriority(ReadyQueue *queue) {
 
             printf("\nExecuting CPU burst on [%s] with PID = [%d]\n", head->pcb->path, pid);
 
+            //start & end time objects
             struct timespec start, end;
 
             clock_gettime(CLOCK_REALTIME, &start);
@@ -151,14 +158,17 @@ void simplePriority(ReadyQueue *queue) {
             kill(pid, SIGCONT);
 
             int status;
-            waitpid(pid, &status, 0);
+            waitpid(pid, &status, 0);//wait until process has finished
 
             clock_gettime(CLOCK_REALTIME, &end);
 
-            head->terminated = 1;
+            head->turnaround_time = (end.tv_sec - head->arrival_time_sec)
+                                    + (double)(end.tv_nsec - head->arrival_time_nano)/1000000000L;
 
             head->time_spent += (end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec)/1000000000L;
+
             head->num_bursts = 1;
+            head->terminated = 1;
         }
         head=head->next;
     }
@@ -180,6 +190,7 @@ void shortestJobFirst(ReadyQueue *queue) {
 
             printf("\nExecuting CPU burst on [%s] with PID = [%d]\n", head->pcb->path, pid);
 
+            //start & end time objects
             struct timespec start, end;
 
             clock_gettime(CLOCK_REALTIME, &start);
@@ -188,14 +199,18 @@ void shortestJobFirst(ReadyQueue *queue) {
             kill(pid, SIGCONT);
 
             int status;
-            waitpid(pid, &status, 0);
+            waitpid(pid, &status, 0);//wait until process has finished
 
             clock_gettime(CLOCK_REALTIME, &end);
 
-            head->terminated = 1;
+            //set turn around time as difference between arrival time and completion time
+            head->turnaround_time = (end.tv_sec - head->arrival_time_sec)
+                                    + (double)(end.tv_nsec - head->arrival_time_nano)/1000000000L;
 
             head->time_spent += (end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec)/1000000000L;
+
             head->num_bursts = 1;
+            head->terminated = 1;
         }
         head=head->next;
     }
@@ -225,7 +240,9 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
 
             printf("\nExecuting CPU burst on [%s] with PID = [%d]\n", elem->pcb->path, pid);
 
+            //start & end time objects
             struct timespec start, end;
+
             clock_gettime(CLOCK_REALTIME, &start);
 
             //Execute CPU burst on process
@@ -241,6 +258,10 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
             //Check if process has terminated
             int status;
             if (waitpid(pid, &status, WNOHANG) != 0){ //use WNOHANG to prevent suspention or waiting
+                //set turn around time as difference between arrival time and completion time
+                elem->turnaround_time = (end.tv_sec - elem->arrival_time_sec)
+                                        + (double)(end.tv_nsec - elem->arrival_time_nano)/1000000000L;
+
                 elem->terminated = 1;
                 num_terminated += 1;
             }
@@ -264,12 +285,14 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
      size_t counter = 0;
 
      double total_time = 0;//total cpu time spent
+     double turnaround_time = 0;
      double avg_wait_time = 0;//average cpu waiting time
 
      printf("\nDETAILS:\n");
 
      while (temp && counter < num_processes){
          total_time += temp->time_spent;
+         turnaround_time += temp->turnaround_time;
 
          if (counter < num_processes - 1) avg_wait_time += avg_wait_time + temp->time_spent;
 
@@ -278,7 +301,7 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
         temp = temp->next;
         counter+=1;
      }
-     printf("\nTotal CPU Turnaround Time : [%lf]", total_time);
-     printf("\nAverage CPU Turnaround Time : [%lf]", (double)total_time/(double)num_processes);
+     printf("\nTotal CPU Burst Time : [%lf]", total_time);
+     printf("\nAverage CPU Turnaround Time : [%lf]", turnaround_time/(double)num_processes);
      printf("\nAverage CPU Waiting Time : [%lf]\n", avg_wait_time/((double)num_processes));
  }

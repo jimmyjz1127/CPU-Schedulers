@@ -25,6 +25,14 @@ typedef struct ReadyQueue  {
     int terminated;//1 for terminated; 0 otherwise
     double time_spent; //burst time spent
     int num_bursts; //number of CPU bursts spent on process
+
+    //time when process enters ready queue
+    double arrival_time_sec;
+    double arrival_time_nano;
+
+    //time difference between when process enters ready queue to when it is complete
+    double turnaround_time;
+
     struct ReadyQueue *next; //next process in ReadyQueue
     struct ReadyQueue *prev; //previous process in ReadyQueue
 } ReadyQueue;

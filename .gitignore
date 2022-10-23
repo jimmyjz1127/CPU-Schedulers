@@ -2,3 +2,4 @@ src/*.o
 src/sched
 src/scheduler
 src/princhars
+src/run
