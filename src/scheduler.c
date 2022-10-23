@@ -83,6 +83,7 @@ ReadyQueue *divideQueue(ReadyQueue *queue) {
  * Merges two halves of Ready Queue object after being halved by merge sort
  * @param (first) : the first half of ReadyQueue object
  * @param (second) : the second half of ReadyQueue object
+ * @param (mode) : inidicates by what metric to sort by. 1 for priority rating, 2 for process/job size
  * @return : first and second merged in the correct order
  */
  ReadyQueue *mergeQueue(ReadyQueue *first, ReadyQueue *second, int mode) {
@@ -112,6 +113,7 @@ ReadyQueue *divideQueue(ReadyQueue *queue) {
 /**
  * Sorts ready queue of PCB's using merge sort algorithm
  * @param (queue) : the ready queue to sort
+ * @param (mode) : inidicates by what metric to sort by. 1 for priority rating, 2 for process/job size
  * @return : the ReadyQueue sorted
  */
 ReadyQueue *mergeSort(ReadyQueue *queue, int mode){
