@@ -19,7 +19,7 @@ ReadyQueue *createQueue(PCB *pcb_list) {
 
         /* Record arrival time (time when process enters ready-queue)  */
         struct timespec arrival;
-        clock_gettime(CLOCK_REALTIME, &arrival);
+        clock_gettime(CLOCK_MONOTONIC, &arrival);
         queue->arrival_time_sec = arrival.tv_sec;
         queue->arrival_time_nano = arrival.tv_nsec;
 
@@ -147,12 +147,12 @@ void simplePriority(ReadyQueue *queue) {
         if (head->terminated == 0){
             pid_t pid = head->pcb->pid;
 
-            printf("\nExecuting CPU burst on [%s] with PID = [%d]\n", head->pcb->path, pid);
+            printf("\nExecuting CPU burst on [%s] with PID = [%d] and priority = [%d]\n", head->pcb->path, pid, head->pcb->priority);
 
             //start & end time objects
             struct timespec start, end;
 
-            clock_gettime(CLOCK_REALTIME, &start);
+            clock_gettime(CLOCK_MONOTONIC, &start);
 
             //Execute CPU burst
             kill(pid, SIGCONT);
@@ -160,7 +160,7 @@ void simplePriority(ReadyQueue *queue) {
             int status;
             waitpid(pid, &status, 0);//wait until process has finished
 
-            clock_gettime(CLOCK_REALTIME, &end);
+            clock_gettime(CLOCK_MONOTONIC, &end);
 
             head->turnaround_time = (end.tv_sec - head->arrival_time_sec)
                                     + (double)(end.tv_nsec - head->arrival_time_nano)/1000000000L;
@@ -195,7 +195,7 @@ void shortestJobFirst(ReadyQueue *queue) {
             //start & end time objects
             struct timespec start, end;
 
-            clock_gettime(CLOCK_REALTIME, &start);
+            clock_gettime(CLOCK_MONOTONIC, &start);
 
             //Execute CPU burst
             kill(pid, SIGCONT);
@@ -203,7 +203,7 @@ void shortestJobFirst(ReadyQueue *queue) {
             int status;
             waitpid(pid, &status, 0);//wait until process has finished
 
-            clock_gettime(CLOCK_REALTIME, &end);
+            clock_gettime(CLOCK_MONOTONIC, &end);
 
             //set turn around time as difference between arrival time and completion time
             head->turnaround_time = (end.tv_sec - head->arrival_time_sec)
@@ -247,14 +247,14 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
             //start & end time objects
             struct timespec start, end;
 
-            clock_gettime(CLOCK_REALTIME, &start);
+            clock_gettime(CLOCK_MONOTONIC, &start);
 
             //Execute CPU burst on process
             kill(pid, SIGCONT); //resume (start) process
             usleep(time_quantum);//allow process to execute for time quantum
             kill(pid, SIGSTOP); //stop process
 
-            clock_gettime(CLOCK_REALTIME, &end);
+            clock_gettime(CLOCK_MONOTONIC, &end);
 
             elem->burst_time+=(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec)/1000000000L;
             elem->num_bursts+=1;
