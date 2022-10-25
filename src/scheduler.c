@@ -308,6 +308,7 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
 
      printf("\nTIME METRICS:");
      printf("\n Total CPU Burst Time : [%lf]", total_time);
+     printf("\n Average CPU Burst Time : [%lf]", total_time/(double)num_processes);
      printf("\n Average CPU Turnaround Time : [%lf]", total_turnaround_time/(double)num_processes);
      printf("\n Average CPU Waiting Time : [%lf]\n", total_wait_time/((double)num_processes));
  }
