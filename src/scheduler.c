@@ -293,19 +293,21 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
      double total_turnaround_time = 0;//total turnaround tim
      double total_wait_time = 0;//total cpu waiting time
 
-     printf("\nDETAILS:\n");
+     printf("\nSUMMARY:\n");
 
      while (temp && counter < num_processes){
          total_time += temp->burst_time;
          total_turnaround_time += temp->turnaround_time;
          total_wait_time += temp->waiting_time;
 
-         printf("Program [%s] with PID=[%d] executed for [%d] CPU burst with total time = [%lf]\n",
+         printf(" Program [%s] with PID=[%d] executed for [%d] CPU burst with total time = [%lf]\n",
                 temp->pcb->path, temp->pcb->pid, temp->num_bursts, temp->burst_time);
         temp = temp->next;
         counter+=1;
      }
-     printf("\nTotal CPU Burst Time : [%lf]", total_time);
-     printf("\nAverage CPU Turnaround Time : [%lf]", total_turnaround_time/(double)num_processes);
-     printf("\nAverage CPU Waiting Time : [%lf]\n", total_wait_time/((double)num_processes));
+
+     printf("\nTIME METRICS:");
+     printf("\n Total CPU Burst Time : [%lf]", total_time);
+     printf("\n Average CPU Turnaround Time : [%lf]", total_turnaround_time/(double)num_processes);
+     printf("\n Average CPU Waiting Time : [%lf]\n", total_wait_time/((double)num_processes));
  }
