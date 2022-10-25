@@ -102,11 +102,9 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
         for (int i = 1; (size_t) i < size; i++){
             *elem = (char *) malloc(strlen(strArr[i]));
             strcpy(*elem, strArr[i]);
-
             elem+=1;
         }
-
-        *elem = NULL;
+        elem = args;
 
         //create child process
         pid_t pid = fork();
@@ -133,8 +131,13 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
             //Make system call to execute program from child process
             execv(strArr[1], args);
         }
+
         //free memory used for args string array
-        freeStrArr(args, size-2);
+        for (int i = 0; i < (int)size-1; i++){
+            free(*elem);
+            elem += 1;
+        }
+        free(args);
         //free memory used for string array of line read from file
         freeStrArr(strArr, size);
 
