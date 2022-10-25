@@ -82,15 +82,15 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
     //check if opening file was successful
     if (fp == NULL) {
         perror("ERROR : cannot read from file");
-        exit(NULL); //NOTE : consider changing to return NULL
+        return NULL; //NOTE : consider changing to return NULL
     }
 
     char *line = NULL;
-    size_t len = 0;
-    size_t read;
+    size_t length = 0;
+    int read;
 
     //read each line from file
-    while ((read = getline(&line, &len, fp)) != -1){
+    while ((read = getline(&line, &length, fp)) != -1){
         size_t size = 0;
 
         char **strArr = splitStr(line, &size);//split line by white space

@@ -15,6 +15,5 @@ printchars:
 
 clean:
 	rm -f printchars
-	rm -f sched
 	rm -f run
 	rm -f *.o
