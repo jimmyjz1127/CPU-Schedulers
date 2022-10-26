@@ -28,9 +28,10 @@ typedef struct PCB {
 
 /**
  * Creates PCB for a child process containing relevant information (PID, priority, index, prev, next)
- * @param (*config_file) : the path to config_file containing programs to be executed through scheduling scheme
- * @param (*pcbQueue) : queue of PCBs to populate
+ * @param (config_file) : the path to config_file containing programs to be executed through scheduling scheme
+ * @param (pcb_list) : queue of PCBs to populate
  * @param (num_processes) : number of processes to schedule
+ * @return : head to linked list of PCB objects
  */
 PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes);
 
@@ -39,9 +40,10 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes);
  * @param (path) : path to program to execute
  * @param (priority) : priority of program to execute
  * @param (pid) : process ID of program to execute
- * @param (size) : the size of the process
+ * @param (size) : the size of the process (for shortest-job-first scheduler)
  * @param (prev) : previous PCB in PCB list
  * @param (next) : next PCB in PCB List
+ * @return : PCB object
  */
 PCB *createPCB(char *path, int priority, pid_t pid, int size, PCB *prev, PCB *next);
 
@@ -51,11 +53,11 @@ PCB *createPCB(char *path, int priority, pid_t pid, int size, PCB *prev, PCB *ne
  */
 void freePCBList(PCB *pcb_list);
 
-
 /**
- * Splits string according to provided delimeter
- * @param (str) : the string the split
- * @param (delimeter) : the delimeter to split the string by
+ * Splits string into array using spaces as delimeter
+ * @param (str) : the string to split
+ * @param (size) : size attribute. Used by calling functions to determine size of string array produced
+ * @return : the array of strings
  */
 char **splitStr(char *str, size_t *size);
 

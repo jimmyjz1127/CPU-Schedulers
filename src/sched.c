@@ -1,7 +1,7 @@
 #include "sched.h"
 
 /**
- * Splits string according to delimeter
+ * Splits string into array using spaces as delimeter
  * @param (str) : the string to split
  * @param (size) : size attribute. Used by calling functions to determine size of string array produced
  * @return : the array of strings
@@ -50,7 +50,7 @@ void freeStrArr(char **strArr, size_t num_elements){
  * @param (path) : path to program to execute
  * @param (priority) : priority of program to execute
  * @param (pid) : process ID of program to execute
- * @param (index) : index within PCB List
+ * @param (size) : the size of the process (for shortest-job-first scheduler)
  * @param (prev) : previous PCB in PCB list
  * @param (next) : next PCB in PCB List
  * @return : PCB object
@@ -70,8 +70,8 @@ PCB *createPCB(char *path, int priority, pid_t pid, int size, PCB *prev, PCB *ne
 
 /**
  * Creates PCB for a child process containing relevant information (PID, priority, index, prev, next)
- * @param (*config_file) : the path to config_file containing programs to be executed through scheduling scheme
- * @param (*pcbQueue) : queue of PCBs to populate
+ * @param (config_file) : the path to config_file containing programs to be executed through scheduling scheme
+ * @param (pcb_list) : queue of PCBs to populate
  * @param (num_processes) : number of processes to schedule
  * @return : head to linked list of PCB objects
  */
@@ -97,14 +97,12 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
 
         /* Create array for program arguments in line read*/
         char **args = malloc(sizeof(char *) * (size - 1));
-        char **elem = args;//for iterating while maintaining head pointer of args
 
+        //copy arguments from line into args
         for (int i = 1; (size_t) i < size; i++){
-            *elem = (char *) malloc(strlen(strArr[i]));
-            strcpy(*elem, strArr[i]);
-            elem+=1;
+            *(args+i-1) =  (char *) malloc(strlen(strArr[i]));
+            strcpy(*(args+i-1), strArr[i]);
         }
-        elem = args;
 
         //create child process
         pid_t pid = fork();
@@ -133,11 +131,9 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
         }
 
         //free memory used for args string array
-        for (int i = 0; i < (int)size-1; i++){
-            free(*elem);
-            elem += 1;
-        }
+        for (int i = 0; i < (int)size-1; i++) free(*(args + i));
         free(args);
+
         //free memory used for string array of line read from file
         freeStrArr(strArr, size);
 

@@ -1,7 +1,7 @@
 #include "scheduler.h"
 
 /**
- * populates ready queue with PCBs
+ * populates ready-queue with PCBs
  * @param (pcb_list) : the list of PCBs to populate ReadyQueue with
  */
 ReadyQueue *createQueue(PCB *pcb_list) {
@@ -36,7 +36,7 @@ ReadyQueue *createQueue(PCB *pcb_list) {
 
 /**
  * Given a ready queue, makes the queue cyclic by connecting head and tail nodes
- * @param (queue) :the ready queue to make cyclic
+ * @param (queue) : the ready queue to make cyclic
  */
 void makeQueueCyclic(ReadyQueue *queue) {
     ReadyQueue *elem = queue;
@@ -162,6 +162,7 @@ void simplePriority(ReadyQueue *queue) {
 
             clock_gettime(CLOCK_MONOTONIC, &end);
 
+            //set turn around time as difference between arrival time and completion time
             head->turnaround_time = (end.tv_sec - head->arrival_time_sec)
                                     + (double)(end.tv_nsec - head->arrival_time_nano)/1000000000L;
 
@@ -281,7 +282,7 @@ void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size) {
 }//end roundRobin()
 
 /**
- * Prints the scheduling info and time metrics for all processes executed from ready queue
+ * Prints the scheduling data and time metrics for all processes executed from ready queue
  * @param (queue) : queue of completed processes
  * @param (num_elements) : the number of elements in readyqueue
  */

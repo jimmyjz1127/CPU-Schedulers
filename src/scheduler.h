@@ -48,13 +48,13 @@ ReadyQueue *createQueue(PCB *pcb_list);
 
 /**
  * Given a ready queue, makes the queue cyclic by connecting head and tail nodes
- * @param (queue) :the ready queue to make cyclic
+ * @param (queue) : the ready queue to make cyclic
  */
 void makeQueueCyclic(ReadyQueue *queue);
 
 /**
  * frees memory of ReadyQueue by freeing all nodes
- * @param (queue) : ReadyQueue to free memory ofsdf
+ * @param (queue) : ReadyQueue to free memory of
  */
 void freeQueue(ReadyQueue *queue, size_t size);
 
@@ -90,6 +90,7 @@ void simplePriority(ReadyQueue *queue);
 
 /**
  * Shortest Job First Scheduler : execute processes from a ready-queue in order based on process size
+ * NOTE : only works for "printchars" program
  * @param (queue) : ReadyQueue of processes to execute (sorted by priority value)
  */
 void shortestJobFirst(ReadyQueue *queue);
@@ -103,8 +104,7 @@ void shortestJobFirst(ReadyQueue *queue);
 void roundRobin(ReadyQueue *queue, useconds_t time_quantum, size_t size);
 
 /**
- * Prints the scheduling info for all processes in ReadyQueue after being executed
- * info : (path to program, PID, number of CPU bursts, time spent)
+ * Prints the scheduling data and time metrics for all processes executed from ready queue
  * @param (queue) : queue of completed processes
  * @param (num_elements) : the number of elements in readyqueue
  */

@@ -12,21 +12,14 @@
  * Usage : takes two arguments (m,n)
  * @arg (m) : the char to print
  * @arg (n) : the number of char (m) to print
- * If args are not specified, printchar will by default print "*" 30 times 
+ * If args are not specified, printchar will by default print "*" 30 times
  */
 int main(int argc, char** argv)
 {
-    char c;
-    int n;
+    char c = '*';
+    int n = 30;
 
-    if(argc < 2){
-        c = '*';
-        n = 30;
-    }
-    else if (argc < 3){
-        c = *argv[1];
-        n = 30;
-    }
+    if (argc < 3) c = *argv[1];
     else{
         c = *argv[1];
         n = atoi(argv[2]);
