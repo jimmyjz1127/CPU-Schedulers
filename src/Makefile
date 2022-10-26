@@ -1,5 +1,5 @@
 all : sched.o scheduler.o main.o printchars
-	clang -Wall -Wextra main.o sched.o scheduler.o -o run
+	clang -Wall -Wextra main.o sched.o scheduler.o -o sched
 
 scheduler.o : scheduler.c scheduler.h
 	clang -Wall -Wextra -c scheduler.c
@@ -15,5 +15,5 @@ printchars:
 
 clean:
 	rm -f printchars
-	rm -f run
+	rm -f sched
 	rm -f *.o

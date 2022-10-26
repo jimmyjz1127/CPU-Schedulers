@@ -2,11 +2,11 @@
 CS3104-P1 Practical : Process Schedulers in C
 
 ## Files
-    sched       : contains implementation for reading configuration file and creating of PCB data structure
-    scheduler   : contains implementation for creating ready queue of processes and different schedulers
-    main        : contains main method for scheduling processes according to given scheduling scheme
-    printchars  : a program that can be scheduled to print chars
-    chars.conf  : configuration file for executing printchars program
+    sched.c       : contains implementation for reading configuration file and creating of PCB data structure
+    scheduler.c   : contains implementation for creating ready queue of processes and different schedulers
+    main.c        : contains main method for scheduling processes according to given scheduling scheme
+    printchars.c  : a program that can be scheduled to print chars
+    chars.conf    : configuration file for executing printchars program
 
 ## Usage
     make clean     : removes all binaries and object files
@@ -14,6 +14,6 @@ CS3104-P1 Practical : Process Schedulers in C
 
     ./run <path to config file> <scheduling type (optional)>
 
-    To run Round-Robin scheduling          :   ./run chars.conf 1
-    To run priority-based scheduling       :   ./run chars.conf 2
-    To run shortest-job-first scheduling   :   ./run chars.conf 3
+    To run Round-Robin scheduling          :   ./sched chars.conf 1
+    To run priority-based scheduling       :   ./sched chars.conf 2
+    To run shortest-job-first scheduling   :   ./sched chars.conf 3
