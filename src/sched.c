@@ -96,11 +96,11 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
         char **strArr = splitStr(line, &size);//split line by white space
 
         /* Create array for program arguments in line read*/
-        char **args = malloc(sizeof(char *) * (size - 1));
+        char **args = malloc(sizeof(char *) * size);
         char **elem = args;//for iterating while maintaining head pointer of args
 
         for (int i = 1; (size_t) i < size; i++){
-          *elem = (char *) malloc(strlen(strArr[i]));
+          *elem = (char *) malloc(strlen(strArr[i]) + 1);
           strcpy(*elem, strArr[i]);
           elem+=1;
         }
@@ -134,7 +134,7 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
 
         //free memory used for args string array
         elem = args;
-        for (int i = 0; i < (int)size-1; i++){
+        for (int i = 0; i < (int)size; i++){
            free(*elem);
            elem += 1;
         }
