@@ -104,7 +104,7 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
           strcpy(*elem, strArr[i]);
           elem+=1;
         }
-        elem = args;
+        *elem = NULL;
 
         //create child process
         pid_t pid = fork();
@@ -133,7 +133,7 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
         }
 
         //free memory used for args string array
-        //free memory used for args string array
+        elem = args;
         for (int i = 0; i < (int)size-1; i++){
            free(*elem);
            elem += 1;
