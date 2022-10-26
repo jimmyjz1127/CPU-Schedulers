@@ -97,14 +97,11 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
 
         /* Create array for program arguments in line read*/
         char **args = malloc(sizeof(char *) * size);
-        char **elem = args;//for iterating while maintaining head pointer of args
 
         for (int i = 1; (size_t) i < size; i++){
-          *elem = (char *) malloc(strlen(strArr[i]) + 1);
+          *(args+i-1) = (char *) malloc(strlen(strArr[i]) + 1);
           strcpy(*elem, strArr[i]);
-          elem+=1;
         }
-        *elem = NULL;
 
         //create child process
         pid_t pid = fork();
@@ -133,10 +130,8 @@ PCB *createPCBList(char *config_file, PCB *pcb_list, size_t *num_processes) {
         }
 
         //free memory used for args string array
-        elem = args;
         for (int i = 0; i < (int)size; i++){
-           free(*elem);
-           elem += 1;
+           free(*(*args + i));
         }
         free(args);
 
