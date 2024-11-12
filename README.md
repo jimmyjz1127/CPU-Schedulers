@@ -1,5 +1,5 @@
-# CS3104-P1
-CS3104-P1 Practical : Process Schedulers in C
+Process Schedulers in C
+Implements Round-Robin, Priority Queue, and shorted job first (based on quantum) scheduling  
 
 ## Files
     sched.c       : contains implementation for reading configuration file and creating of PCB data structure
